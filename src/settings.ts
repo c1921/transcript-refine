@@ -2,7 +2,7 @@ import { App, PluginSettingTab, Setting, Modal, Notice, SecretComponent, getLang
 import TranscriptRefinePlugin from './main';
 import { TranscriptRefineSettings, PromptTemplate } from './types';
 import { getPresetDefaults } from './utils/templates';
-import { t, format } from './i18n';
+import { t } from './i18n';
 
 export const DEFAULT_SETTINGS: TranscriptRefineSettings = {
 	apiUrl: 'https://api.deepseek.com',
