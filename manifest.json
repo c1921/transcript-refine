@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.0",
+	"id": "transcript-refine",
+	"name": "Transcript Refine",
+	"version": "0.1.0",
 	"minAppVersion": "1.0.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "使用 AI 整理语音转文字内容，修正错误、优化结构，让杂乱的口语文字变得清晰可读。",
+	"author": "",
+	"authorUrl": "",
 	"isDesktopOnly": false
 }

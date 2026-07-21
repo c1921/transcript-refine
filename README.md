@@ -1,92 +1,53 @@
-# Obsidian Sample Plugin
+# Transcript Refine
 
-This is a sample plugin for Obsidian (https://obsidian.md).
+使用 AI 整理语音转文字内容的 Obsidian 插件。修正错别字、优化结构，让杂乱的口语文字变得清晰可读。
 
-This project uses TypeScript to provide type checking and documentation.
-The repo depends on the latest plugin API (obsidian.d.ts) in TypeScript Definition format, which contains TSDoc comments describing what it does.
+## 功能
 
-This sample plugin demonstrates some of the basic functionality the plugin API can do.
+- **选中即整理**：选中一段文字 → 命令面板或右键 → AI 整理 → 原地替换
+- **整篇文档整理**：一键将全文整理为结构清晰的内容
+- **四套预设模板**：
+  - 通用整理 — 日常语音笔记，修正错别字和语法，分段落
+  - 会议纪要 — 提取议题，按议题分组，列出讨论要点和待办
+  - 访谈提炼 — 保留问答结构，精简冗余，末尾附要点摘要
+  - 口语润色 — 保留口语风格，让表达更流畅自然
+- **自定义模板**：可新增、编辑、删除自己的整理模板
+- **右键菜单**：选中文字后右键直接选择整理模板
+- **多 API 兼容**：优先适配 DeepSeek，同时兼容 OpenAI 及所有兼容接口
 
-- Adds a ribbon icon, which shows a Notice when clicked.
-- Adds a command "Open modal (simple)" which opens a Modal.
-- Adds a plugin setting tab to the settings page.
-- Registers a global click event and outputs a Notice on click.
-- Registers a global interval which logs 'setInterval' to the console.
+## 使用方式
 
-## First time developing plugins?
+1. 在设置中填入 **API 地址**、**API Key** 和**模型名称**
+2. 选择默认模板
+3. 在编辑器中选中要整理的语音转文字内容
+4. 通过以下方式触发：
+   - 命令面板（Ctrl+P）搜索「AI 整理」
+   - 右键菜单选择「AI 整理」或「AI 整理为 →」
+5. 整理后的文字会**原地替换**原文，不满意可 Ctrl+Z 撤销
 
-Quick starting guide for new plugin devs:
+## 设置
 
-- Check if [someone already developed a plugin for what you want](https://obsidian.md/plugins)! There might be an existing plugin similar enough that you can partner up with.
-- Make a copy of this repo as a template with the "Use this template" button (login to GitHub if you don't see it).
-- Clone your repo to a local development folder. For convenience, you can place this folder in your `.obsidian/plugins/your-plugin-name` folder.
-- Install NodeJS, then run `npm i` in the command line under your repo folder.
-- Run `npm run dev` to compile your plugin from `src/main.ts` to `main.js`.
-- Make changes to `src/main.ts` (or create new `.ts` files). Those changes should be automatically compiled into `main.js`.
-- Reload Obsidian to load the new version of your plugin.
-- Enable plugin in settings window.
-- For updates to the Obsidian API run `npm update` in the command line under your repo folder.
+| 设置项 | 说明 | 默认值 |
+|---|---|---|
+| API 地址 | DeepSeek 兼容的 API 端点 | `https://api.deepseek.com` |
+| API Key | 你的 API Key（[获取](https://platform.deepseek.com/api_keys)） | — |
+| 模型 | 模型名称 | `deepseek-v4-flash` |
+| 默认模板 | 快速整理使用的模板 | 通用整理 |
+| 请求超时 | API 超时（毫秒） | 30000 |
+| 最大 Token | 单次输出上限 | 4096 |
 
-## Releasing new releases
+## 安装
 
-- Update your `manifest.json` with your new version number, such as `1.0.1`, and the minimum Obsidian version required for your latest release.
-- Update your `versions.json` file with `"new-plugin-version": "minimum-obsidian-version"` so older versions of Obsidian can download an older version of your plugin that's compatible.
-- Create new GitHub release using your new version number as the "Tag version". Use the exact version number, don't include a prefix `v`. See here for an example: https://github.com/obsidianmd/obsidian-sample-plugin/releases
-- Upload the files `manifest.json`, `main.js`, `styles.css` as binary attachments. Note: The manifest.json file must be in two places, first the root path of your repository and also in the release.
-- Publish the release.
+### 手动安装
 
-> You can simplify the version bump process by running `npm version patch`, `npm version minor` or `npm version major` after updating `minAppVersion` manually in `manifest.json`.
-> The command will bump version in `manifest.json` and `package.json`, and add the entry for the new version to `versions.json`
+1. 下载 `main.js`、`manifest.json`、`styles.css`
+2. 放入 `<Vault>/.obsidian/plugins/transcript-refine/`
+3. 在 Obsidian 设置中启用插件
 
-## Adding your plugin to the community plugin list
+### 开发
 
-- Check the [plugin guidelines](https://docs.obsidian.md/Plugins/Releasing/Plugin+guidelines).
-- Publish an initial version.
-- Make sure you have a `README.md` file in the root of your repo.
-- Make a pull request at https://github.com/obsidianmd/obsidian-releases to add your plugin.
-
-## How to use
-
-- Clone this repo.
-- Make sure your NodeJS is at least v18 (`node --version`).
-- `npm i` to install dependencies.
-- `npm run dev` to start compilation in watch mode.
-
-## Manually installing the plugin
-
-- Copy over `main.js`, `styles.css`, `manifest.json` to your vault `VaultFolder/.obsidian/plugins/your-plugin-id/`.
-
-## Improve code quality with eslint
-
-- [ESLint](https://eslint.org/) is a tool that analyzes your code to quickly find problems. You can run ESLint against your plugin to find common bugs and ways to improve your code.
-- This project already has eslint preconfigured, you can invoke a check by running`npm run lint`
-- Together with a custom eslint [plugin](https://github.com/obsidianmd/eslint-plugin) for Obsidan specific code guidelines.
-- A GitHub action is preconfigured to automatically lint every commit on all branches.
-
-## Funding URL
-
-You can include funding URLs where people who use your plugin can financially support it.
-
-The simple way is to set the `fundingUrl` field to your link in your `manifest.json` file:
-
-```json
-{
-	"fundingUrl": "https://buymeacoffee.com"
-}
+```bash
+npm install
+npm run dev    # 开发模式（热更新）
+npm run build  # 生产构建
 ```
-
-If you have multiple URLs, you can also do:
-
-```json
-{
-	"fundingUrl": {
-		"Buy Me a Coffee": "https://buymeacoffee.com",
-		"GitHub Sponsor": "https://github.com/sponsors",
-		"Patreon": "https://www.patreon.com/"
-	}
-}
-```
-
-## API Documentation
-
-See https://docs.obsidian.md

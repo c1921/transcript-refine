@@ -1,0 +1,1 @@
+export { registerEditorMenu } from './menu';
