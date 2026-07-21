@@ -1,5 +1,6 @@
 import { requestUrl, RequestUrlResponse } from 'obsidian';
 import { TranscriptRefineSettings } from './types';
+import { t, format } from './i18n';
 
 /**
  * 调用 AI API 进行文字整理
@@ -50,16 +51,16 @@ export async function callAI(
 	} catch (err) {
 		const message = err instanceof Error ? err.message : String(err);
 		if (message.includes('timeout') || message.includes('Timeout')) {
-			throw new Error('请求超时，请检查网络或增加超时设置');
+			throw new Error(t().api.timeout);
 		}
 		if (message.includes('fetch') || message.includes('network') || message.includes('ENOTFOUND')) {
-			throw new Error('网络错误，无法连接到 API 服务器');
+			throw new Error(t().api.networkError);
 		}
-		throw new Error(`API 请求失败：${message}`);
+		throw new Error(format(t().api.requestFailed, { message }));
 	}
 
 	if (response.status !== 200) {
-		let errorMsg = `API 返回错误 (${response.status})`;
+		let errorMsg = format(t().api.apiReturnedError, { status: response.status });
 		try {
 			const errBody = response.json as { error?: { message?: string } };
 			if (errBody?.error?.message) {
@@ -70,10 +71,10 @@ export async function callAI(
 		}
 
 		if (response.status === 401) {
-			throw new Error('API Key 无效，请在设置中检查');
+			throw new Error(t().api.invalidKey);
 		}
 		if (response.status === 429) {
-			throw new Error('API 请求频率过高，请稍后再试');
+			throw new Error(t().api.rateLimited);
 		}
 		throw new Error(errorMsg);
 	}
@@ -84,7 +85,7 @@ export async function callAI(
 
 	const result = data?.choices?.[0]?.message?.content;
 	if (!result) {
-		throw new Error('AI 未返回有效内容，请重试');
+		throw new Error(t().api.noContent);
 	}
 
 	return result;
@@ -131,7 +132,7 @@ export async function callAIWithChunking(
 		onProgress?.(i + 1, chunks.length);
 		const chunkPrompt = i === 0
 			? systemPrompt
-			: `${systemPrompt}\n\n注意：这是长文档的第 ${i + 1}/${chunks.length} 部分，请保持与前文风格一致。`;
+			: `${systemPrompt}\n\n${format(t().chunk.note, { current: i + 1, total: chunks.length })}`;
 		const refined = await callAI(chunks[i]!, chunkPrompt, settings, apiKey);
 		refinedChunks.push(refined);
 	}

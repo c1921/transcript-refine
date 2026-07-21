@@ -1,12 +1,13 @@
 import { Editor, MarkdownView, MarkdownFileInfo } from 'obsidian';
 import TranscriptRefinePlugin from '../main';
 import { refineSelection, refineWholeDocument } from './refine';
+import { t } from '../i18n';
 
 export function registerCommands(plugin: TranscriptRefinePlugin): void {
 	// 选中整理 —— 仅在编辑器有选中文字时可用
 	plugin.addCommand({
 		id: 'refine-selection',
-		name: 'AI 整理选中文字',
+		name: t().commands.refineSelection,
 		editorCheckCallback: (
 			checking: boolean,
 			editor: Editor,
@@ -27,7 +28,7 @@ export function registerCommands(plugin: TranscriptRefinePlugin): void {
 	// 整篇整理 —— 始终可用
 	plugin.addCommand({
 		id: 'refine-whole-doc',
-		name: 'AI 整理整篇文档',
+		name: t().commands.refineWholeDoc,
 		editorCheckCallback: (
 			checking: boolean,
 			editor: Editor,

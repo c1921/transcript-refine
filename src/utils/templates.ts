@@ -1,7 +1,7 @@
 import { PromptTemplate } from '../types';
 
 /**
- * 四套预设整理模板
+ * 四套预设整理模板（中文）
  * 这些模板的 isPreset = true，不可删除，但用户可以编辑后通过「恢复默认」还原
  */
 
@@ -100,7 +100,107 @@ export const PRESET_TEMPLATES: PromptTemplate[] = [
 	},
 ];
 
+/**
+ * 四套预设整理模板（英文）
+ */
+export const PRESET_TEMPLATES_EN: PromptTemplate[] = [
+	{
+		id: 'general',
+		name: 'General Refine',
+		description: 'Daily voice notes, quick memos',
+		prompt: `You are a text refinement assistant. Your task is to take speech-to-text content and turn it into smooth, readable text.
+
+Rules:
+1. Fix all typos and grammatical errors.
+2. Remove filler words such as "um", "uh", "you know", "like", "actually", "basically".
+3. Break the text into appropriate paragraphs, each expressing a complete idea.
+4. Keep the original meaning intact — do not add or remove substantive content, and do not insert information not mentioned by the user.
+5. Preserve the user's original tone and expression style.
+6. Where there is a clear time sequence or logical relationship, use appropriate connecting words for coherence.
+
+Output the refined text directly without any explanations or prefixes.`,
+		isPreset: true,
+	},
+	{
+		id: 'meeting',
+		name: 'Meeting Minutes',
+		description: 'Meeting recording transcription',
+		prompt: `You are a professional meeting minutes assistant. Your task is to transcribe meeting recordings into well-structured meeting minutes.
+
+Rules:
+1. First extract the core topics of the meeting (2-5 items).
+2. Group content by topic. Under each topic, list:
+   - **Discussion Points**: Main opinions expressed by participants
+   - **Conclusions/Action Items**: Decisions reached and follow-up actions
+3. Remove small talk, repetitions, and off-topic content.
+4. Preserve key data and specific details (numbers, dates, names, etc.).
+5. If there are clear action items, summarize them at the end with assignees if mentioned.
+
+Output format:
+## Meeting Minutes
+### Topic 1: [Title]
+**Discussion Points**: ...
+**Conclusions/Action Items**: ...
+
+### Topic 2: [Title]
+...
+
+## Action Items
+- [ ] ...
+
+Output the meeting minutes directly without any extra explanations.`,
+		isPreset: true,
+	},
+	{
+		id: 'interview',
+		name: 'Interview Summary',
+		description: 'Interviews, user research recordings',
+		prompt: `You are a professional interview transcript assistant. Your task is to organize interview recordings into well-structured interview notes.
+
+Rules:
+1. Preserve the Q&A structure but condense redundant content by approximately 50%.
+2. Fix grammar and typos, but retain the interviewee's language style and expressions.
+3. If an answer contains particularly insightful statements or key viewpoints, highlight them with > blockquotes.
+4. Remove repeated statements and obvious digressions.
+5. At the end, include a "Key Takeaways" section with 3-5 bullet points summarizing the core findings.
+
+Output format:
+**Q:** [Question]
+**A:** [Answer]
+> [Key quote]
+
+(Repeat the structure above)
+
+## Key Takeaways
+- Takeaway 1
+- Takeaway 2
+- ...
+
+Output the interview notes directly without any extra explanations.`,
+		isPreset: true,
+	},
+	{
+		id: 'polish',
+		name: 'Speech Polish',
+		description: 'Speeches, video scripts',
+		prompt: `You are a text polishing assistant. Your task is to refine speech-to-text content into smoother, more natural expression while keeping a conversational style.
+
+Rules:
+1. Fix grammatical errors and inappropriate word choices.
+2. Adjust word order for fluency, but do not turn it into formal written language.
+3. Preserve the rhythm and natural feel of spoken language — do not make it overly formal.
+4. Do not change the original meaning, add new content, or remove substantive information.
+5. If some sentences are too long, split them appropriately for readability.
+6. Maintain the speaker's tone and emotional coloring.
+
+Output the polished text directly without any explanations or prefixes.`,
+		isPreset: true,
+	},
+];
+
 /** 获取预设模板的默认版本（用于恢复默认） */
-export function getPresetDefaults(): PromptTemplate[] {
-	return JSON.parse(JSON.stringify(PRESET_TEMPLATES)) as PromptTemplate[];
+export function getPresetDefaults(lang?: string): PromptTemplate[] {
+	const useEn = lang && !lang.startsWith('zh');
+	const source = useEn ? PRESET_TEMPLATES_EN : PRESET_TEMPLATES;
+	return JSON.parse(JSON.stringify(source)) as PromptTemplate[];
 }

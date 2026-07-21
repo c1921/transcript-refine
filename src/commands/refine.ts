@@ -1,6 +1,7 @@
 import { Editor, Notice } from 'obsidian';
 import TranscriptRefinePlugin from '../main';
 import { callAI, callAIWithChunking } from '../api';
+import { t } from '../i18n';
 
 /**
  * 获取当前使用的模板
@@ -30,13 +31,13 @@ export async function refineSelection(
 	const selection = editor.getSelection();
 
 	if (!selection || selection.trim().length === 0) {
-		new Notice('未选中有效文字');
+		new Notice(t().notices.noSelection);
 		return;
 	}
 
 	const apiKey = resolveApiKey(plugin);
 	if (!apiKey) {
-		new Notice('请先在设置中配置 API Key');
+		new Notice(t().notices.configureApiKey);
 		return;
 	}
 
@@ -45,7 +46,7 @@ export async function refineSelection(
 		: getActiveTemplate(plugin);
 
 	if (!template) {
-		new Notice('未找到可用模板');
+		new Notice(t().notices.noTemplate);
 		return;
 	}
 
@@ -59,9 +60,9 @@ export async function refineSelection(
 			apiKey,
 		);
 		editor.replaceSelection(result);
-		new Notice('整理完成');
+		new Notice(t().notices.refineComplete);
 	} catch (err) {
-		const message = err instanceof Error ? err.message : '整理失败';
+		const message = err instanceof Error ? err.message : t().notices.refineFailed;
 		new Notice(message);
 	} finally {
 		plugin.setRefining(false);
@@ -79,13 +80,13 @@ export async function refineWholeDocument(
 	const content = editor.getValue();
 
 	if (!content || content.trim().length === 0) {
-		new Notice('文档为空');
+		new Notice(t().notices.docEmpty);
 		return;
 	}
 
 	const apiKey = resolveApiKey(plugin);
 	if (!apiKey) {
-		new Notice('请先在设置中配置 API Key');
+		new Notice(t().notices.configureApiKey);
 		return;
 	}
 
@@ -94,7 +95,7 @@ export async function refineWholeDocument(
 		: getActiveTemplate(plugin);
 
 	if (!template) {
-		new Notice('未找到可用模板');
+		new Notice(t().notices.noTemplate);
 		return;
 	}
 
@@ -108,9 +109,9 @@ export async function refineWholeDocument(
 			apiKey,
 		);
 		editor.setValue(result);
-		new Notice('整篇整理完成');
+		new Notice(t().notices.wholeDocComplete);
 	} catch (err) {
-		const message = err instanceof Error ? err.message : '整理失败';
+		const message = err instanceof Error ? err.message : t().notices.refineFailed;
 		new Notice(message);
 	} finally {
 		plugin.setRefining(false);

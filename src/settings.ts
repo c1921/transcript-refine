@@ -1,14 +1,15 @@
-import { App, PluginSettingTab, Setting, Modal, Notice, SecretComponent } from 'obsidian';
+import { App, PluginSettingTab, Setting, Modal, Notice, SecretComponent, getLanguage } from 'obsidian';
 import TranscriptRefinePlugin from './main';
 import { TranscriptRefineSettings, PromptTemplate } from './types';
 import { getPresetDefaults } from './utils/templates';
+import { t, format } from './i18n';
 
 export const DEFAULT_SETTINGS: TranscriptRefineSettings = {
 	apiUrl: 'https://api.deepseek.com',
 	apiKey: '',
 	model: 'deepseek-v4-flash',
 	defaultTemplateId: 'general',
-	templates: getPresetDefaults(),
+	templates: [],
 	timeout: 30000,
 	maxTokens: 4096,
 };
@@ -30,11 +31,11 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		// ── API 配置 ──
-		new Setting(containerEl).setName('API 配置').setHeading();
+		new Setting(containerEl).setName(t().settings.heading.api).setHeading();
 
 		new Setting(containerEl)
-			.setName('API 地址')
-			.setDesc('DeepSeek 兼容的 API 端点地址')
+			.setName(t().settings.apiUrl.name)
+			.setDesc(t().settings.apiUrl.desc)
 			.addText((text) =>
 				text
 					.setPlaceholder('https://api.deepseek.com')
@@ -46,8 +47,8 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName('API Key')
-			.setDesc('从系统密钥库选择或新建 API 密钥')
+			.setName(t().settings.apiKey.name)
+			.setDesc(t().settings.apiKey.desc)
 			.addComponent((el) => new SecretComponent(this.app, el)
 				.setValue(this.plugin.settings.apiKey)
 				.onChange(async (value) => {
@@ -56,8 +57,8 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('模型')
-			.setDesc('使用的模型名称，如 deepseek-v4-flash、deepseek-v4-pro 等')
+			.setName(t().settings.model.name)
+			.setDesc(t().settings.model.desc)
 			.addText((text) =>
 				text
 					.setPlaceholder('deepseek-v4-flash')
@@ -69,7 +70,7 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 			);
 
 		// ── 整理行为 ──
-		new Setting(containerEl).setName('整理行为').setHeading();
+		new Setting(containerEl).setName(t().settings.heading.behavior).setHeading();
 
 		const templateOptions: Record<string, string> = {};
 		for (const t of this.plugin.settings.templates) {
@@ -77,8 +78,8 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 		}
 
 		new Setting(containerEl)
-			.setName('默认模板')
-			.setDesc('快速整理时默认使用的模板')
+			.setName(t().settings.defaultTemplate.name)
+			.setDesc(t().settings.defaultTemplate.desc)
 			.addDropdown((dropdown) =>
 				dropdown
 					.addOptions(templateOptions)
@@ -90,16 +91,16 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 			);
 
 		// ── Prompt 模板管理 ──
-		new Setting(containerEl).setName('Prompt 模板管理').setHeading();
+		new Setting(containerEl).setName(t().settings.heading.templates).setHeading();
 
 		this.renderTemplateList(containerEl);
 
 		new Setting(containerEl)
-			.setName('新增模板')
-			.setDesc('创建一个自定义整理模板')
+			.setName(t().settings.newTemplate.name)
+			.setDesc(t().settings.newTemplate.desc)
 			.addButton((btn) =>
 				btn
-					.setButtonText('+ 新增')
+					.setButtonText(t().settings.newTemplate.button)
 					.setCta()
 					.onClick(() => {
 						this.openTemplateEditor(null);
@@ -107,11 +108,11 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 			);
 
 		// ── 高级 ──
-		new Setting(containerEl).setName('高级').setHeading();
+		new Setting(containerEl).setName(t().settings.heading.advanced).setHeading();
 
 		new Setting(containerEl)
-			.setName('请求超时（毫秒）')
-			.setDesc('API 请求的超时时间，默认 30000')
+			.setName(t().settings.timeout.name)
+			.setDesc(t().settings.timeout.desc)
 			.addText((text) =>
 				text
 					.setPlaceholder('30000')
@@ -126,8 +127,8 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 			);
 
 		new Setting(containerEl)
-			.setName('最大 Token 数')
-			.setDesc('AI 每次输出的最大 token 数，默认 4096')
+			.setName(t().settings.maxTokens.name)
+			.setDesc(t().settings.maxTokens.desc)
 			.addText((text) =>
 				text
 					.setPlaceholder('4096')
@@ -145,20 +146,23 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 	/** 渲染模板列表 */
 	private renderTemplateList(container: HTMLElement): void {
 		for (const template of this.plugin.settings.templates) {
+			const suffix = template.isPreset
+				? t().settings.templateList.presetSuffix
+				: t().settings.templateList.customSuffix;
 			const setting = new Setting(container)
 				.setName(template.name)
-				.setDesc(template.description + (template.isPreset ? '（预设）' : '（自定义）'));
+				.setDesc(template.description + suffix);
 
 			setting.addButton((btn) =>
-				btn.setButtonText('编辑').onClick(() => {
+				btn.setButtonText(t().settings.templateList.edit).onClick(() => {
 					this.openTemplateEditor(template);
 				}),
 			);
 
 			if (template.isPreset) {
 				setting.addButton((btn) =>
-					btn.setButtonText('恢复默认').onClick(async () => {
-						const defaults = getPresetDefaults();
+					btn.setButtonText(t().settings.templateList.reset).onClick(async () => {
+						const defaults = getPresetDefaults(getLanguage());
 						const def = defaults.find((d) => d.id === template.id);
 						if (def) {
 							Object.assign(template, def);
@@ -169,7 +173,7 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 				);
 			} else {
 				setting.addButton((btn) =>
-					btn.setButtonText('删除').setWarning().onClick(async () => {
+					btn.setButtonText(t().settings.templateList.delete).setWarning().onClick(async () => {
 						this.plugin.settings.templates =
 							this.plugin.settings.templates.filter(
 								(t) => t.id !== template.id,
@@ -235,11 +239,13 @@ class TemplateEditorModal extends Modal {
 		contentEl.empty();
 
 		contentEl.createEl('h3', {
-			text: this.template.isPreset ? '编辑预设模板' : '编辑模板',
+			text: this.template.isPreset
+				? t().settings.templateEditor.titleEdit
+				: t().settings.templateEditor.titleNew,
 		});
 
 		new Setting(contentEl)
-			.setName('模板名称')
+			.setName(t().settings.templateEditor.name)
 			.addText((text) => {
 				text.setValue(this.template.name).onChange((v) => {
 					this.template.name = v;
@@ -247,8 +253,8 @@ class TemplateEditorModal extends Modal {
 			});
 
 		new Setting(contentEl)
-			.setName('描述')
-			.setDesc('一两句话说明适用场景')
+			.setName(t().settings.templateEditor.desc)
+			.setDesc(t().settings.templateEditor.descPlaceholder)
 			.addText((text) => {
 				text.setValue(this.template.description).onChange((v) => {
 					this.template.description = v;
@@ -256,8 +262,8 @@ class TemplateEditorModal extends Modal {
 			});
 
 		new Setting(contentEl)
-			.setName('System Prompt')
-			.setDesc('发送给 AI 的系统指令')
+			.setName(t().settings.templateEditor.systemPrompt)
+			.setDesc(t().settings.templateEditor.systemPromptDesc)
 			.addTextArea((text) => {
 				text
 					.setValue(this.template.prompt)
@@ -269,22 +275,22 @@ class TemplateEditorModal extends Modal {
 
 		new Setting(contentEl)
 			.addButton((btn) =>
-				btn.setButtonText('取消').onClick(() => {
+				btn.setButtonText(t().settings.templateEditor.cancel).onClick(() => {
 					void this.onSubmit(null);
 					this.close();
 				}),
 			)
 			.addButton((btn) =>
 				btn
-					.setButtonText('保存')
+					.setButtonText(t().settings.templateEditor.save)
 					.setCta()
 					.onClick(() => {
 						if (!this.template.name.trim()) {
-							new Notice('模板名称不能为空');
+							new Notice(t().settings.templateEditor.nameRequired);
 							return;
 						}
 						if (!this.template.prompt.trim()) {
-							new Notice('System Prompt 不能为空');
+							new Notice(t().settings.templateEditor.promptRequired);
 							return;
 						}
 						void this.onSubmit(this.template);

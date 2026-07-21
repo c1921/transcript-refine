@@ -1,6 +1,7 @@
 import { Editor, Menu, MenuItem } from 'obsidian';
 import TranscriptRefinePlugin from '../main';
 import { refineSelection } from '../commands/refine';
+import { t, format } from '../i18n';
 
 /** Narrow interface to access workspace.on without overload resolution issues */
 interface EditorMenuAccess {
@@ -25,8 +26,8 @@ export function registerEditorMenu(plugin: TranscriptRefinePlugin): void {
 				(t) => t.id === plugin.settings.defaultTemplateId,
 			);
 			const defaultName = defaultTemplate
-				? `AI 整理（${defaultTemplate.name}）`
-				: 'AI 整理';
+				? format(t().menu.aiRefineWith, { name: defaultTemplate.name })
+				: t().menu.aiRefine;
 
 			menu.addItem((item: MenuItem) => {
 				item
@@ -38,7 +39,7 @@ export function registerEditorMenu(plugin: TranscriptRefinePlugin): void {
 			});
 
 			menu.addItem((item: MenuItem) => {
-				item.setTitle('AI 整理为 →').setIcon('pencil');
+				item.setTitle(t().menu.aiRefineAs).setIcon('pencil');
 
 				// setSubmenu exists at runtime but may be missing from typings
 				interface HasSetSubmenu {
