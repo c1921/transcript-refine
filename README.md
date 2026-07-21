@@ -1,53 +1,56 @@
 # Transcript Refine
 
-使用 AI 整理语音转文字内容的 Obsidian 插件。修正错别字、优化结构，让杂乱的口语文字变得清晰可读。
+English | [中文](./README.zh-CN.md)
 
-## 功能
+Obsidian plugin to refine speech-to-text content with AI. Fix errors, improve structure, and turn messy transcripts into clear, readable text.
 
-- **选中即整理**：选中一段文字 → 命令面板或右键 → AI 整理 → 原地替换
-- **整篇文档整理**：一键将全文整理为结构清晰的内容
-- **四套预设模板**：
-  - 通用整理 — 日常语音笔记，修正错别字和语法，分段落
-  - 会议纪要 — 提取议题，按议题分组，列出讨论要点和待办
-  - 访谈提炼 — 保留问答结构，精简冗余，末尾附要点摘要
-  - 口语润色 — 保留口语风格，让表达更流畅自然
-- **自定义模板**：可新增、编辑、删除自己的整理模板
-- **右键菜单**：选中文字后右键直接选择整理模板
-- **多 API 兼容**：优先适配 DeepSeek，同时兼容 OpenAI 及所有兼容接口
+## Features
 
-## 使用方式
+- **Refine selection**: Select text → Command Palette or right-click → AI refine → replaces in place
+- **Refine whole document**: One-click to restructure the entire document
+- **Four preset templates**:
+  - General — daily voice notes, fix typos and grammar, split into paragraphs
+  - Meeting Minutes — extract topics, group by agenda, list discussion points and action items
+  - Interview — preserve Q&A structure, trim redundancy, highlight key quotes, append summary
+  - Polish — preserve spoken style, make expression smoother and more natural
+- **Custom templates**: Add, edit, and delete your own refine templates
+- **Right-click menu**: Select text, right-click to choose a template
+- **Multi-API support**: Optimized for DeepSeek, compatible with OpenAI and all compatible APIs
+- **Secret storage**: API key managed via Obsidian SecretStorage — never written to plaintext config files
 
-1. 在设置中填入 **API 地址**、**API Key** 和**模型名称**
-2. 选择默认模板
-3. 在编辑器中选中要整理的语音转文字内容
-4. 通过以下方式触发：
-   - 命令面板（Ctrl+P）搜索「AI 整理」
-   - 右键菜单选择「AI 整理」或「AI 整理为 →」
-5. 整理后的文字会**原地替换**原文，不满意可 Ctrl+Z 撤销
+## Usage
 
-## 设置
+1. Fill in **API URL** and **Model** in settings, select your **API Key** from the system keyring
+2. Choose a default template
+3. Select the speech-to-text content in the editor
+4. Trigger via:
+   - Command Palette (Ctrl+P) → "AI 整理选中文字" or "AI 整理整篇文档"
+   - Right-click → "AI 整理" or "AI 整理为 →"
+5. The refined text **replaces the original** in place — undo with Ctrl+Z if unhappy
 
-| 设置项 | 说明 | 默认值 |
+## Settings
+
+| Setting | Description | Default |
 |---|---|---|
-| API 地址 | DeepSeek 兼容的 API 端点 | `https://api.deepseek.com` |
-| API Key | 你的 API Key（[获取](https://platform.deepseek.com/api_keys)） | — |
-| 模型 | 模型名称 | `deepseek-v4-flash` |
-| 默认模板 | 快速整理使用的模板 | 通用整理 |
-| 请求超时 | API 超时（毫秒） | 30000 |
-| 最大 Token | 单次输出上限 | 4096 |
+| API URL | DeepSeek-compatible API endpoint | `https://api.deepseek.com` |
+| API Key | Select or create via system keyring (SecretStorage) | — |
+| Model | Model name | `deepseek-v4-flash` |
+| Default template | Template used for quick refine | General |
+| Timeout | API timeout (ms) | 30000 |
+| Max tokens | Output token limit | 4096 |
 
-## 安装
+## Installation
 
-### 手动安装
+### Manual
 
-1. 下载 `main.js`、`manifest.json`、`styles.css`
-2. 放入 `<Vault>/.obsidian/plugins/transcript-refine/`
-3. 在 Obsidian 设置中启用插件
+1. Download `main.js`, `manifest.json`, `styles.css`
+2. Place them in `<Vault>/.obsidian/plugins/transcript-refine/`
+3. Enable the plugin in Obsidian settings
 
-### 开发
+### Development
 
 ```bash
 npm install
-npm run dev    # 开发模式（热更新）
-npm run build  # 生产构建
+npm run dev    # Watch mode
+npm run build  # Production build
 ```
