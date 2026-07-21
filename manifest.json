@@ -1,7 +1,7 @@
 {
 	"id": "transcript-refine",
 	"name": "Transcript Refine",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"minAppVersion": "1.12.0",
 	"description": "Use AI to refine speech-to-text transcripts: fix errors, optimize structure, and turn messy spoken language into clear, readable text.",
 	"author": "c1921",

@@ -163,19 +163,19 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 						if (def) {
 							Object.assign(template, def);
 							await this.plugin.saveSettings();
-							this.update();
+							this.display();
 						}
 					}),
 				);
 			} else {
 				setting.addButton((btn) =>
-					btn.setButtonText(t().settings.templateList.delete).setDestructive().onClick(async () => {
+					btn.setButtonText(t().settings.templateList.delete).setWarning().onClick(async () => {
 						this.plugin.settings.templates =
 							this.plugin.settings.templates.filter(
 								(t) => t.id !== template.id,
 							);
 						await this.plugin.saveSettings();
-						this.update();
+						this.display();
 					}),
 				);
 			}
@@ -210,7 +210,7 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 			}
 
 			await this.plugin.saveSettings();
-			this.update();
+			this.display();
 		}).open();
 	}
 }
