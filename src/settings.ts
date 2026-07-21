@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, Modal, Notice, TextComponent, TextAreaComponent, SecretComponent } from 'obsidian';
+import { App, PluginSettingTab, Setting, Modal, Notice, SecretComponent } from 'obsidian';
 import TranscriptRefinePlugin from './main';
 import { TranscriptRefineSettings, PromptTemplate } from './types';
 import { getPresetDefaults } from './utils/templates';
@@ -19,6 +19,10 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 	constructor(app: App, plugin: TranscriptRefinePlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
+	}
+
+	getSettingDefinitions() {
+		return [];
 	}
 
 	display(): void {
@@ -234,14 +238,9 @@ class TemplateEditorModal extends Modal {
 			text: this.template.isPreset ? '编辑预设模板' : '编辑模板',
 		});
 
-		let nameComponent: TextComponent;
-		let descComponent: TextComponent;
-		let promptComponent: TextAreaComponent;
-
 		new Setting(contentEl)
 			.setName('模板名称')
 			.addText((text) => {
-				nameComponent = text;
 				text.setValue(this.template.name).onChange((v) => {
 					this.template.name = v;
 				});
@@ -251,7 +250,6 @@ class TemplateEditorModal extends Modal {
 			.setName('描述')
 			.setDesc('一两句话说明适用场景')
 			.addText((text) => {
-				descComponent = text;
 				text.setValue(this.template.description).onChange((v) => {
 					this.template.description = v;
 				});
@@ -261,7 +259,6 @@ class TemplateEditorModal extends Modal {
 			.setName('System Prompt')
 			.setDesc('发送给 AI 的系统指令')
 			.addTextArea((text) => {
-				promptComponent = text;
 				text
 					.setValue(this.template.prompt)
 					.onChange((v) => {
