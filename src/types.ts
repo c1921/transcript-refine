@@ -19,6 +19,7 @@ export interface PromptTemplate {
  */
 export interface TranscriptRefineSettings {
 	apiUrl: string;
+	/** SecretStorage 中密钥的 ID，由 SecretComponent 选择 */
 	apiKey: string;
 	model: string;
 	defaultTemplateId: string;

@@ -1,4 +1,4 @@
-import { App, PluginSettingTab, Setting, Modal, Notice, TextComponent, TextAreaComponent } from 'obsidian';
+import { App, PluginSettingTab, Setting, Modal, Notice, TextComponent, TextAreaComponent, SecretComponent } from 'obsidian';
 import TranscriptRefinePlugin from './main';
 import { TranscriptRefineSettings, PromptTemplate } from './types';
 import { getPresetDefaults } from './utils/templates';
@@ -43,16 +43,13 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 
 		new Setting(containerEl)
 			.setName('API Key')
-			.setDesc('你的 API 密钥，仅存储在本地')
-			.addText((text) => {
-				text.setPlaceholder('sk-...')
-					.setValue(this.plugin.settings.apiKey)
-					.onChange(async (value) => {
-						this.plugin.settings.apiKey = value;
-						await this.plugin.saveSettings();
-					});
-				text.inputEl.type = 'password';
-			});
+			.setDesc('从系统密钥库选择或新建 API 密钥')
+			.addComponent((el) => new SecretComponent(this.app, el)
+				.setValue(this.plugin.settings.apiKey)
+				.onChange(async (value) => {
+					this.plugin.settings.apiKey = value;
+					await this.plugin.saveSettings();
+				}));
 
 		new Setting(containerEl)
 			.setName('模型')

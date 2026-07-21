@@ -12,6 +12,7 @@ export async function callAI(
 	content: string,
 	systemPrompt: string,
 	settings: TranscriptRefineSettings,
+	apiKey: string,
 ): Promise<string> {
 	const url = `${settings.apiUrl}/chat/completions`;
 
@@ -40,7 +41,7 @@ export async function callAI(
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${settings.apiKey}`,
+					Authorization: `Bearer ${apiKey}`,
 				},
 				body: JSON.stringify(body),
 			}),
@@ -97,6 +98,7 @@ export async function callAIWithChunking(
 	content: string,
 	systemPrompt: string,
 	settings: TranscriptRefineSettings,
+	apiKey: string,
 	onProgress?: (current: number, total: number) => void,
 ): Promise<string> {
 	const CHUNK_SIZE = 3000;
@@ -120,7 +122,7 @@ export async function callAIWithChunking(
 
 	// 如果只有一个 chunk，直接调用
 	if (chunks.length <= 1) {
-		return callAI(content, systemPrompt, settings);
+		return callAI(content, systemPrompt, settings, apiKey);
 	}
 
 	// 逐段整理
@@ -130,7 +132,7 @@ export async function callAIWithChunking(
 		const chunkPrompt = i === 0
 			? systemPrompt
 			: `${systemPrompt}\n\n注意：这是长文档的第 ${i + 1}/${chunks.length} 部分，请保持与前文风格一致。`;
-		const refined = await callAI(chunks[i]!, chunkPrompt, settings);
+		const refined = await callAI(chunks[i]!, chunkPrompt, settings, apiKey);
 		refinedChunks.push(refined);
 	}
 

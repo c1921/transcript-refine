@@ -11,6 +11,15 @@ function getActiveTemplate(plugin: TranscriptRefinePlugin) {
 }
 
 /**
+ * 从 SecretStorage 中获取实际 API Key
+ */
+function resolveApiKey(plugin: TranscriptRefinePlugin): string | null {
+	const secretId = plugin.settings.apiKey;
+	if (!secretId) return null;
+	return plugin.app.secretStorage.getSecret(secretId);
+}
+
+/**
  * 整理选中文字 —— 原地替换
  */
 export async function refineSelection(
@@ -25,7 +34,8 @@ export async function refineSelection(
 		return;
 	}
 
-	if (!plugin.settings.apiKey) {
+	const apiKey = resolveApiKey(plugin);
+	if (!apiKey) {
 		new Notice('请先在设置中配置 API Key');
 		return;
 	}
@@ -46,6 +56,7 @@ export async function refineSelection(
 			selection,
 			template.prompt,
 			plugin.settings,
+			apiKey,
 		);
 		editor.replaceSelection(result);
 		new Notice('整理完成');
@@ -72,7 +83,8 @@ export async function refineWholeDocument(
 		return;
 	}
 
-	if (!plugin.settings.apiKey) {
+	const apiKey = resolveApiKey(plugin);
+	if (!apiKey) {
 		new Notice('请先在设置中配置 API Key');
 		return;
 	}
@@ -93,6 +105,7 @@ export async function refineWholeDocument(
 			content,
 			template.prompt,
 			plugin.settings,
+			apiKey,
 		);
 		editor.setValue(result);
 		new Notice('整篇整理完成');
