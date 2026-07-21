@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "transcript-refine",
 	"version": "0.1.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "An Obsidian plugin that uses AI to refine speech-to-text transcripts.",
 	"main": "main.js",
 	"type": "module",
 	"scripts": {

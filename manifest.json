@@ -4,7 +4,7 @@
 	"version": "0.1.0",
 	"minAppVersion": "1.11.4",
 	"description": "Use AI to refine speech-to-text transcripts: fix errors, optimize structure, and turn messy spoken language into clear, readable text.",
-	"author": "",
-	"authorUrl": "",
+	"author": "c1921",
+	"authorUrl": "https://github.com/c1921",
 	"isDesktopOnly": false
 }
