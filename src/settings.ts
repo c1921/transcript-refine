@@ -2,7 +2,7 @@ import { App, PluginSettingTab, Setting, Modal, Notice, SecretComponent, getLang
 import TranscriptRefinePlugin from './main';
 import { TranscriptRefineSettings, PromptTemplate } from './types';
 import { getPresetDefaults } from './utils/templates';
-import { t, format } from './i18n';
+import { t } from './i18n';
 
 export const DEFAULT_SETTINGS: TranscriptRefineSettings = {
 	apiUrl: 'https://api.deepseek.com',
@@ -20,10 +20,6 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 	constructor(app: App, plugin: TranscriptRefinePlugin) {
 		super(app, plugin);
 		this.plugin = plugin;
-	}
-
-	getSettingDefinitions() {
-		return [];
 	}
 
 	display(): void {
@@ -167,19 +163,19 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 						if (def) {
 							Object.assign(template, def);
 							await this.plugin.saveSettings();
-							this.display();
+							this.update();
 						}
 					}),
 				);
 			} else {
 				setting.addButton((btn) =>
-					btn.setButtonText(t().settings.templateList.delete).setWarning().onClick(async () => {
+					btn.setButtonText(t().settings.templateList.delete).setDestructive().onClick(async () => {
 						this.plugin.settings.templates =
 							this.plugin.settings.templates.filter(
 								(t) => t.id !== template.id,
 							);
 						await this.plugin.saveSettings();
-						this.display();
+						this.update();
 					}),
 				);
 			}
@@ -214,7 +210,7 @@ export class TranscriptRefineSettingTab extends PluginSettingTab {
 			}
 
 			await this.plugin.saveSettings();
-			this.display();
+			this.update();
 		}).open();
 	}
 }
